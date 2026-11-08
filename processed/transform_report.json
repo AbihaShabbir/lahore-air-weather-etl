@@ -1,0 +1,11 @@
+{
+  "air_rows_raw": 8760,
+  "weather_rows_raw": 8760,
+  "duplicates_removed": 0,
+  "rows_after_merge": 8760,
+  "missing_cells_before": 0,
+  "missing_cells_after_interpolation": 0,
+  "rows_dropped_missing_required": 0,
+  "rows_valid": 8760,
+  "rows_rejected": 0
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lahore Air Quality Dashboard</title>
+  <meta name="description" content="ETL + EDA project: how weather relates to air pollution in Lahore.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <p class="eyebrow">Programming for AI · Fall 2026 · Project 1</p>
+      <h1>Lahore Air Quality &amp; Weather</h1>
+      <p class="sub" id="subtitle">ETL + EDA pipeline</p>
+      <p class="group">Group: 2025-AI-254 · 2025-AI-255 · 2025-AI-260</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="error" class="error" hidden></div>
+
+    <section aria-labelledby="h-kpi">
+      <h2 id="h-kpi" class="sr-only">Key numbers</h2>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <section class="card">
+      <h2>PM2.5 through the year</h2>
+      <p class="note">Daily average. Hover (or touch) the line to read a day.</p>
+      <div class="legend"><span class="key dash"></span> WHO 24-hour guideline (<span class="who-val">15</span> µg/m³)</div>
+      <div class="chart" id="c-daily"></div>
+    </section>
+
+    <div class="two">
+      <section class="card">
+        <h2>Average PM2.5 by month</h2>
+        <p class="note">Winter months are the worst.</p>
+        <div class="legend"><span class="key dash"></span> WHO guideline (<span class="who-val">15</span>)</div>
+        <div class="chart" id="c-monthly"></div>
+        <details>
+          <summary>Show as a table</summary>
+          <table class="data" id="t-monthly"></table>
+        </details>
+      </section>
+
+      <section class="card">
+        <h2>Average PM2.5 by hour of day</h2>
+        <p class="note">Pakistan time, averaged over the whole period.</p>
+        <div class="chart" id="c-hourly"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Days above the WHO guideline</h2>
+      <p class="note">Label = days over the limit / days measured in that month.</p>
+      <div class="chart" id="c-who"></div>
+    </section>
+
+    <section class="card">
+      <h2>How does weather relate to PM2.5?</h2>
+      <div class="controls">
+        <label for="wx">Weather variable</label>
+        <select id="wx">
+          <option value="temperature_2m">Temperature (°C)</option>
+          <option value="relative_humidity_2m">Humidity (%)</option>
+          <option value="wind_speed_10m">Wind speed (km/h)</option>
+          <option value="surface_pressure">Pressure (hPa)</option>
+        </select>
+        <span class="pill" id="wx-corr"></span>
+      </div>
+      <p class="note">Each dot is one hour (random sample of 1,500). The dark line is the median PM2.5 in each slice of the weather variable.</p>
+      <div class="chart" id="c-scatter"></div>
+
+      <h3>Correlation table</h3>
+      <p class="note">Values close to +1 or −1 mean a strong relationship; near 0 means almost none. Correlation shows association, not cause.</p>
+      <div class="scroll"><table class="corr" id="t-corr"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Key findings</h2>
+      <ul class="findings" id="findings"></ul>
+    </section>
+
+    <section class="card">
+      <h2>How this project was built</h2>
+      <p class="note">One pipeline, six stages. Each stage is a separate Python file.</p>
+      <ol class="steps" id="steps"></ol>
+    </section>
+
+    <section class="card">
+      <h2>Limitations</h2>
+      <ul class="findings">
+        <li>The air quality values come from a computer model (CAMS, via Open-Meteo), not from monitors on the ground in Lahore, so real readings can differ.</li>
+        <li>One grid point is used for the whole city.</li>
+        <li>The correlations show association only. They do not prove that weather causes pollution changes.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Data: <a href="https://open-meteo.com/">Open-Meteo</a> Air Quality and Historical Weather APIs. WHO 2021 air quality guidelines. <span id="generated"></span></p>
+  </footer>
+
+  <div id="tip" class="tip" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

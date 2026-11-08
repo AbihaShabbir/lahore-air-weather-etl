@@ -1,0 +1,50 @@
+# Daily batch refresh: re-run the whole ETL pipeline on a rolling 365-day window,
+# then commit the new website data so Vercel redeploys the site.
+# If any step fails, the job stops before the commit step, so the live site keeps
+# the last good data.
+name: Daily data refresh
+
+on:
+  schedule:
+    - cron: "30 2 * * *"   # every day at 02:30 UTC (07:30 in Lahore)
+  workflow_dispatch:        # "Run workflow" button on the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies (no jupyter)
+        run: pip install requests pandas pydantic sqlalchemy matplotlib seaborn
+
+      - name: Run the pipeline (all 5 stages)
+        run: python run_all.py
+
+      - name: Commit the new website data (only if it changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/data.js outputs/findings.md
+          git diff --staged --quiet || git commit -m "Daily data refresh"
+          git push
+
+      - name: Trigger a Vercel redeploy (only if the secret is set)
+        if: env.VERCEL_DEPLOY_HOOK != ''
+        run: curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" > /dev/null

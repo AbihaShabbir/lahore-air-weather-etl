@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.DS_Store
+_to_delete/
+VIVA_NOTES.md
+REQUIREMENTS_CHECK.md
+report.docx
+~$*.docx
